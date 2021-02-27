@@ -1,0 +1,16 @@
+---
+
+stages:
+  - lint
+
+yamllint:
+  image: pipelinecomponents/yamllint:latest
+  stage: lint
+  script:
+    - yamllint .
+
+ansible-lint:
+  image: pipelinecomponents/ansible-lint:latest
+  stage: lint
+  script:
+    - ansible-lint .
