@@ -5,6 +5,15 @@
   hosts: all
   gather_facts: false
   tasks:
-  - name: Example assertion
+  - name: check for running nginx
+    uri:
+      url: http://localhost
+      status_code: 200
+    register: result
+    until: result.status == 200
+    retries: 60
+    delay: 1
+
+  - name: Assert nginx is running
     assert:
-      that: true
+      that: result.status == 200
