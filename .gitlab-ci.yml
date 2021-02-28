@@ -17,14 +17,13 @@ ansible-lint:
     - ansible-lint .
 
 molecule-test:
-  image: debian:buster
+  image: docker:stable-dind
   stage: molecule
   variables:
     ANSIBLE_STDOUT_CALLBACK: "debug"
     ANSIBLE_FORCE_COLOR: '1'
     PY_COLORS: '1'
   script:
-    - apt-get update
-    - apt-get install python3 python3-pip -y
+    - apk add --no-cache python3 python3-dev py3-pip gcc git curl build-base autoconf automake py3-cryptography linux-headers musl-dev libffi-dev openssl-dev openssh
     - pip3 install ansible molecule[docker] docker
     - molecule test
