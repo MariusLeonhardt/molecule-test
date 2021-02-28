@@ -1,0 +1,57 @@
+---
+name: CI
+'on':
+  pull_request:
+  push:
+    branches:
+      - master
+
+defaults:
+  run:
+    working-directory: molecule-test
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout codebase
+        uses: actions/checkout@v2
+        with:
+          path: molecule-test
+
+      - name: Setup python3
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install test deps
+        run: pip3 install yamllint ansible ansible-lint
+
+      - name: Lint code
+        run: |
+          yamllint .
+          ansible-lint
+
+  molecule:
+    name: Molecule
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout codebase
+        uses: actions/checkout@v2
+        with:
+          path: molecule-test
+
+      - name: setup python3
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: install test deps
+        run: pip3 install ansible molecule[docker] docker
+
+      - name: Run Molecule tests
+        run: molecule test
+        env:
+          PY_COLORS: '1'
+          ANSIBLE_FORCE_COLOR: '1'
+          ANSIBLE_STDOUT_CALLBACK: 'debug'
